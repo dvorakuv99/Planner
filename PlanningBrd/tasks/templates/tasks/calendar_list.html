@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Calendars</h1>
+
+<a href="/tasks/calendars/create/">Create new calendar</a>
+
+<ul>
+{% for calendar in calendars %}
+    <li>
+        <strong>{{ calendar.name }}</strong>
+        ({{ calendar.field }})
+    </li>
+{% empty %}
+    <li>No calendars yet</li>
+{% endfor %}
+</ul>
+
+{% endblock %}

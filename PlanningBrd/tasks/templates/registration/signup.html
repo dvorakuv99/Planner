@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrace | Planning Board</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+            animation: bgPulse 8s ease-in-out infinite alternate;
+        }
+        @keyframes bgPulse {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.05); }
+        }
+        .auth-shell {
+            width: min(100%, 450px);
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 30px 100px rgba(0,0,0,0.2);
+            overflow: hidden;
+            animation: slideIn 0.6s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .auth-header {
+            padding: 40px 28px;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            text-align: center;
+        }
+        .logo {
+            display: none;
+        }
+        .field-icon {
+            display: none;
+        }
+        .auth-header h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 600;
+            opacity: 0;
+            animation: fadeInDown 0.7s ease-out 0.3s forwards;
+        }
+        .auth-header p {
+            margin: 12px 0 0;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.6;
+            font-size: 0.95rem;
+            opacity: 0;
+            animation: fadeInDown 0.7s ease-out 0.4s forwards;
+        }
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .auth-content {
+            padding: 32px 28px;
+        }
+        .auth-content form {
+            display: grid;
+            gap: 20px;
+            animation: fadeIn 0.7s ease-out 0.5s forwards;
+            opacity: 0;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .field {
+            display: grid;
+            gap: 10px;
+        }
+        .field-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #2d3748;
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s, background 0.2s;
+            background: #f7fafc;
+        }
+        input:focus {
+            border-color: #48bb78;
+            box-shadow: 0 0 0 4px rgba(72,187,120,0.15);
+            background: white;
+        }
+        input:hover {
+            border-color: #cbd5e0;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+            padding: 0;
+        }
+        .password-toggle:hover {
+            opacity: 1;
+        }
+        .btn {
+            padding: 14px 18px;
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 8px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(72,187,120,0.3);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .footer-note {
+            margin-top: 24px;
+            font-size: 0.95rem;
+            color: #4a5568;
+            text-align: center;
+        }
+        .footer-note a {
+            color: #48bb78;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        .footer-note a:hover {
+            color: #38a169;
+            text-decoration: underline;
+        }
+        .errors {
+            padding: 14px;
+            border-radius: 12px;
+            background: #fed7d7;
+            color: #9b2c2c;
+            border: 2px solid #fc8181;
+            font-size: 0.95rem;
+            animation: shake 0.5s ease-in-out;
+        }
+        .errors div {
+            margin-bottom: 8px;
+        }
+        .errors div:last-child {
+            margin-bottom: 0;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-shell">
+        <div class="auth-header">
+            <h1>Vytvořit účet</h1>
+            <p>Stačí uživatelské jméno a heslo. Uživatelské jméno musí být unikátní.</p>
+        </div>
+        <div class="auth-content">
+            {% if form.errors %}
+                <div class="errors">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div>{{ error }}</div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <div class="field">
+                    <label for="id_username">Uživatelské jméno</label>
+                    <div class="field-wrapper">
+                        {{ form.username }}
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="id_password">Heslo</label>
+                    <div class="field-wrapper">
+                        {{ form.password }}
+                        <button type="button" class="password-toggle" onclick="togglePassword()" title="Zobrazit heslo">*</button>
+                    </div>
+                </div>
+                <button type="submit" class="btn">Vytvořit účet →</button>
+            </form>
+            <div class="footer-note">
+                Už máš účet? <a href="{% url 'login' %}">Přihlásit se</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('id_password');
+            const button = document.querySelector('.password-toggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                button.textContent = '*';
+            } else {
+                passwordInput.type = 'password';
+                button.textContent = '*';
+            }
+        }
+    </script>
+</body>
+</html>

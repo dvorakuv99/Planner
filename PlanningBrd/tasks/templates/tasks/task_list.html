@@ -1,0 +1,650 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.tasks-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tasks-header h1 {
+    margin: 0;
+    color: #333;
+    font-size: 2em;
+    font-weight: 600;
+}
+
+.create-btn {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.create-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(72, 187, 120, 0.3);
+}
+
+.filters-section {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.filter-summary {
+    padding: 20px 25px;
+    background: #f8f9fa;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: #333;
+    list-style: none;
+    position: relative;
+}
+
+.filter-summary:hover {
+    background: #e9ecef;
+}
+
+.filter-summary::marker {
+    display: none;
+}
+
+.filter-summary::after {
+    content: '▶';
+    position: absolute;
+    right: 25px;
+    transition: transform 0.2s;
+}
+
+details[open] .filter-summary::after {
+    transform: rotate(90deg);
+}
+
+.filters-row {
+    padding: 25px;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.select-all-container {
+    margin-bottom: 15px;
+}
+
+.select-all-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #333;
+}
+
+.select-all-checkbox {
+    accent-color: #48bb78;
+    width: 18px;
+    height: 18px;
+}
+
+.project-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+}
+
+.project-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.project-checkbox:hover {
+    background: #f8fafc;
+}
+
+.project-checkbox input {
+    accent-color: #48bb78;
+    width: 18px;
+    height: 18px;
+}
+
+.filter-group label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+}
+
+.filter-group select {
+    padding: 10px 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1em;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.filter-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.apply-filters-btn {
+    background: #667eea;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    align-self: end;
+}
+
+.apply-filters-btn:hover {
+    background: #5a67d8;
+    transform: translateY(-1px);
+}
+
+.tasks-container {
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    overflow: visible;
+    padding: 20px 24px;
+    margin-bottom: 40px;
+}
+
+.project-group {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 22px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+}
+
+.project-group.completed {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.project-group.completed .project-group-title {
+    color: #64748b;
+    text-decoration: line-through;
+}
+
+.project-group.completed .project-group-meta,
+.project-group.completed .project-group-actions a {
+    color: #64748b;
+}
+
+.project-group.completed .task-item {
+    opacity: 0.85;
+}
+
+.project-group.completed .task-info h3 {
+    text-decoration: line-through;
+    color: #94a3b8;
+}
+
+.project-group.completed .task-info p {
+    color: #94a3b8;
+}
+
+.project-group-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 16px;
+    padding: 18px 20px;
+    background: #f8fafc;
+    border-radius: 18px;
+    border: 1px solid #e2e8f0;
+}
+
+.project-group-title {
+    display: block;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.project-group-meta {
+    color: #475569;
+    font-size: 0.95em;
+}
+
+.project-group-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+
+.task-item {
+    display: grid;
+    grid-template-columns: minmax(0, 2.5fr) repeat(3, minmax(0, 1fr));
+    align-items: center;
+    border-bottom: 1px solid #e9ecef;
+    transition: background-color 0.2s;
+    padding: 16px 0;
+    gap: 16px;
+}
+
+.task-info {
+    min-width: 0;
+}
+
+.task-item.completed .task-info p {
+    text-decoration: line-through;
+}
+
+.task-item.completed .task-info h3 {
+    color: #999;
+}
+
+.task-item.completed .task-info p {
+    color: #bbb;
+}
+
+.task-item.completed .task-actions a {
+    opacity: 0.7;
+}
+
+.task-tag {
+    display: inline-block;
+    background: #ebf8ff;
+    color: #2c5282;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.75em;
+    margin: 2px 2px 0 0;
+}
+
+.task-item:hover {
+    background: #f8f9fa;
+}
+
+.task-item:last-child {
+    border-bottom: none;
+}
+
+.task-info h3 {
+    margin: 0 0 5px 0;
+    font-size: 1.1em;
+    color: #333;
+    transition: all 0.2s;
+}
+
+.task-info h3:hover {
+    color: #667eea;
+}
+
+.task-info h3 a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.task-info p {
+    margin: 0;
+    color: #666;
+    font-size: 0.9em;
+}
+
+.task-project {
+    background: #e6fffa;
+    color: #065f46;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.task-priority {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 500;
+    text-align: center;
+}
+
+.priority-high {
+    background: #fed7d7;
+    color: #c53030;
+}
+
+.priority-medium {
+    background: #fef5e7;
+    color: #d69e2e;
+}
+
+.priority-low {
+    background: #c6f6d5;
+    color: #276749;
+}
+
+.task-status {
+    text-align: center;
+}
+
+.status-completed {
+    background: #c6f6d5;
+    color: #276749;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+.status-pending {
+    background: #fef5e7;
+    color: #d69e2e;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+.task-actions {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+.task-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+}
+
+.task-checkbox-label:hover {
+    background: #e2e8f0;
+}
+
+.task-checkbox-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.custom-task-checkbox {
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    border: 2px solid #cbd5e0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    background: white;
+    flex-shrink: 0;
+}
+
+.task-checkbox-input:checked + .custom-task-checkbox {
+    background: #48bb78;
+    border-color: #48bb78;
+}
+
+.task-checkbox-input:checked + .custom-task-checkbox::before {
+    content: '✓';
+    color: white;
+    font-size: 0.95rem;
+    line-height: 0;
+}
+
+.task-checkbox-input:focus-visible + .custom-task-checkbox {
+    box-shadow: 0 0 0 4px rgba(72, 187, 120, 0.18);
+}
+
+.task-checkbox-text {
+    font-weight: 500;
+    color: #334155;
+}
+
+.btn-small {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 0.95em;
+    font-weight: 500;
+    transition: all 0.2s;
+    min-width: 40px;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.btn-edit {
+    background: #f6ad55;
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #ed8936;
+    transform: translateY(-1px);
+}
+
+.btn-complete {
+    background: #48bb78;
+    color: white;
+}
+
+.btn-complete:hover {
+    background: #38a169;
+    transform: translateY(-1px);
+}
+
+.btn-complete-active {
+    background: #276749;
+    color: white;
+}
+
+.btn-complete-active:hover {
+    background: #22543d;
+    transform: translateY(-1px);
+}
+
+.btn-delete {
+    background: #f56565;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #e53e3e;
+    transform: translateY(-1px);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state h2 {
+    color: #666;
+    margin-bottom: 20px;
+    font-weight: 300;
+}
+
+.empty-state p {
+    color: #999;
+    margin-bottom: 30px;
+    font-size: 1.1em;
+}
+
+@media (max-width: 768px) {
+    .tasks-header {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+
+    .filters-row {
+        padding: 20px;
+    }
+
+    .task-item {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        text-align: center;
+    }
+}
+</style>
+
+<div class="tasks-header">
+    <h1>Úkoly</h1>
+    <a href="{% url 'tasks:create_task' %}" class="create-btn">➕ Nový úkol</a>
+</div>
+
+<details class="filters-section">
+    <summary class="filter-summary">Filtr úkolů</summary>
+    <form method="get" class="filters-row">
+        <input type="hidden" name="filter_submitted" value="1">
+        <div class="filter-group">
+            <div class="select-all-container">
+                <label class="select-all-label">
+                    <input type="checkbox" id="select-all" class="select-all-checkbox">
+                    <span>Vybrat všechny projekty</span>
+                </label>
+            </div>
+            <div class="project-checkbox-grid">
+                {% for project in projects %}
+                    <label class="project-checkbox">
+                        <input type="checkbox" name="projects" value="{{ project.id }}"
+                            {% if filter_submitted %}
+                                {% if project.id in selected_project_ids %}checked{% endif %}
+                            {% else %}
+                                checked
+                            {% endif %}>
+                        <span>{{ project.title }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+        <button type="submit" class="apply-filters-btn">Aktualizovat</button>
+    </form>
+</details>
+
+<div class="tasks-container">
+    {% if grouped_tasks %}
+        {% for project, project_tasks in grouped_tasks %}
+            <div class="project-group">
+                <div class="project-group-header{% if project.completed %} completed{% endif %}">
+                    <div>
+                        <span class="project-group-title">{{ project.title }}</span>
+                        <span class="project-group-meta">({{ project_tasks.count }} úkolů)</span>
+                    </div>
+                    <div class="project-group-actions">
+                        <a href="{% url 'tasks:project_detail' project.pk %}" class="btn-small btn-edit">Otevřít projekt</a>
+                    </div>
+                </div>
+
+                {% for task in project_tasks %}
+                        <div class="task-item{% if task.completed %} completed{% endif %}">
+                            <div class="task-info">
+                                <h3><a href="{% url 'tasks:task_detail' task.pk %}" style="color: inherit; text-decoration: none;">{{ task.title }}</a></h3>
+                                <p>
+                                    {% if task.description %}{{ task.description|truncatechars:80 }}{% endif %}
+                                    {% if task.start_time %} • {{ task.start_time }}{% if task.end_time %} - {{ task.end_time }}{% endif %}{% endif %}
+                                </p>
+                            </div>
+
+                            <div class="task-priority priority-{{ task.priority_css }}">
+                                {{ task.get_priority_display }}
+                            </div>
+
+                            <div>
+                                {{ task.date|date:"d.m.Y" }}
+                            </div>
+
+                            <div class="task-actions">
+                                <label class="task-checkbox-label">
+                                    <input type="checkbox" class="task-checkbox-input" onchange="toggleTaskCompleted({{ task.pk }})" {% if task.completed %}checked{% endif %}>
+                                    <span class="custom-task-checkbox"></span>
+                                    <span class="task-checkbox-text">{% if task.completed %}Dokončeno{% else %}Dokončit{% endif %}</span>
+                                </label>
+                                <a href="{% url 'tasks:edit_task' task.pk %}" class="btn-small btn-edit" title="Upravit">✏️</a>
+                                <a href="{% url 'tasks:delete_task' task.pk %}" class="btn-small btn-delete" title="Smazat">🗑️</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        {% elif tasks %}
+            <div class="empty-state">
+                <h2>Žádné úkoly pro vybrané projekty</h2>
+                <p>Vyberte jiné projekty nebo zrušte filtr, aby se zobrazily všechny úkoly.</p>
+                <a href="{% url 'tasks:task_list' %}" class="create-btn">Zrušit filtr</a>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h2>Žádné úkoly</h2>
+                <p>Začněte vytvářením svého prvního úkolu!</p>
+                <a href="{% url 'tasks:create_task' %}" class="create-btn">Vytvořit první úkol</a>
+            </div>
+        {% endif %}
+</div>
+<script>
+    const csrfToken = '{{ csrf_token }}';
+
+    function toggleTaskCompleted(pk) {
+        fetch(`{% url 'tasks:toggle_task_completed' 0 %}`.replace('0', pk), {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json',
+            },
+        }).then(() => {
+            location.reload();
+        });
+    }
+
+    // Toggle all project checkboxes
+    document.getElementById('select-all').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('input[name="projects"]');
+        checkboxes.forEach(cb => cb.checked = this.checked);
+    });
+</script>
+{% endblock %}

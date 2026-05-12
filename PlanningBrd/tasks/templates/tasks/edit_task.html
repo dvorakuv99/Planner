@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.edit-container {
+    max-width: 800px;
+    margin: 30px auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.edit-header {
+    background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.edit-header h1 {
+    margin: 0;
+    font-size: 2em;
+    font-weight: 300;
+}
+
+.edit-body {
+    padding: 40px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 1em;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1em;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.date-time-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+}
+
+.date-time-inputs .form-group {
+    margin-bottom: 0;
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+.error-message {
+    color: #e53e3e;
+    font-size: 0.9em;
+    margin-top: 5px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btn {
+    padding: 14px 30px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 500;
+    transition: all 0.2s;
+    font-size: 1em;
+    min-width: 140px;
+    text-align: center;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5a67d8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn-secondary {
+    background: #a0aec0;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #718096;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(160, 174, 192, 0.3);
+}
+
+.required {
+    color: #e53e3e;
+}
+
+.time-toggle {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.time-toggle button {
+    background: #e2e8f0;
+    color: #4a5568;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.time-toggle button:hover {
+    background: #cbd5e0;
+}
+
+.time-fields {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+</style>
+
+<div class="edit-container">
+    <div class="edit-header">
+        <h1>✏️ Upravit úkol</h1>
+    </div>
+
+    <div class="edit-body">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">Název úkolu <span class="required">*</span></label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <div class="error-message">{{ form.title.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}">Popis</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <div class="error-message">{{ form.description.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.project.id_for_label }}">Projekt <span class="required">*</span></label>
+                {{ form.project }}
+                {% if form.project.errors %}
+                    <div class="error-message">{{ form.project.errors.0 }}</div>
+                {% endif %}
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="{{ form.date.id_for_label }}">Datum <span class="required">*</span></label>
+                    {{ form.date }}
+                    {% if form.date.errors %}
+                        <div class="error-message">{{ form.date.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.priority.id_for_label }}">Priorita</label>
+                    {{ form.priority }}
+                    {% if form.priority.errors %}
+                        <div class="error-message">{{ form.priority.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="time-toggle">
+                <button type="button" id="toggle-time-btn">🕒 Přidat čas</button>
+            </div>
+
+            <div class="time-fields" id="time-fields">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="{{ form.start_time.id_for_label }}">Čas začátku</label>
+                        {{ form.start_time }}
+                        {% if form.start_time.errors %}
+                            <div class="error-message">{{ form.start_time.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.end_time.id_for_label }}">Čas konce</label>
+                        {{ form.end_time }}
+                        {% if form.end_time.errors %}
+                            <div class="error-message">{{ form.end_time.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="checkbox-group">
+                {{ form.completed }}
+                <label for="{{ form.completed.id_for_label }}">Dokončeno</label>
+            </div>
+
+            <div class="action-buttons">
+                <button type="submit" class="btn btn-primary">💾 Uložit změny</button>
+                <a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">⬅️ Zrušit</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('toggle-time-btn');
+    const timeFields = document.getElementById('time-fields');
+
+    // Toggle time fields
+    toggleBtn.addEventListener('click', function() {
+        if (timeFields.style.display === 'none' || timeFields.style.display === '') {
+            timeFields.style.display = 'block';
+            toggleBtn.textContent = '🕒 Skrýt čas';
+        } else {
+            timeFields.style.display = 'none';
+            toggleBtn.textContent = '🕒 Přidat čas';
+        }
+    });
+
+    const startTime = document.getElementById('{{ form.start_time.id_for_label }}');
+    const endTime = document.getElementById('{{ form.end_time.id_for_label }}');
+    if ((startTime && startTime.value) || (endTime && endTime.value)) {
+        timeFields.style.display = 'block';
+        toggleBtn.textContent = '🕒 Skrýt čas';
+    }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.delete-container {
+    max-width: 600px;
+    margin: 50px auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.delete-header {
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.delete-header h1 {
+    margin: 0;
+    font-size: 1.8em;
+    font-weight: 300;
+}
+
+.delete-body {
+    padding: 30px;
+}
+
+.task-info {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border-left: 4px solid #f56565;
+}
+
+.task-info h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.task-info p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.warning-text {
+    color: #e53e3e;
+    font-weight: 500;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.btn-container {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    color: white;
+    box-shadow: 0 2px 4px rgba(229, 62, 62, 0.3);
+}
+
+.btn-danger:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(229, 62, 62, 0.4);
+}
+
+.btn-secondary {
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+.btn-secondary:hover {
+    background: #cbd5e0;
+}
+</style>
+
+<div class="delete-container">
+    <div class="delete-header">
+        <h1>Smazat úkol</h1>
+    </div>
+    <div class="delete-body">
+        <div class="task-info">
+            <h3>{{ todo.title }}</h3>
+            {% if todo.description %}
+            <p>{{ todo.description }}</p>
+            {% endif %}
+            <p><strong>Datum splnění:</strong> {{ todo.due_date|date:"d.m.Y" }}</p>
+            <p><strong>Stav:</strong> {% if todo.completed %}Splněno{% else %}Nesplněno{% endif %}</p>
+        </div>
+        <div class="warning-text">
+            Opravdu chcete smazat tento úkol? Tato akce je nevratná.
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="btn-container">
+                <a href="{% url 'tasks:todo_list' %}" class="btn btn-secondary">Zrušit</a>
+                <button type="submit" class="btn btn-danger">Smazat úkol</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

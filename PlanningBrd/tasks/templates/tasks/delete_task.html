@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.delete-container {
+    max-width: 600px;
+    margin: 50px auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.delete-header {
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.delete-header h1 {
+    margin: 0;
+    font-size: 1.8em;
+    font-weight: 300;
+}
+
+.delete-body {
+    padding: 30px;
+}
+
+.task-info {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border-left: 4px solid #f56565;
+}
+
+.task-info h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.task-info p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.warning-text {
+    background: #fff5f5;
+    border: 1px solid #feb2b2;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    color: #c53030;
+}
+
+.warning-text strong {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 500;
+    transition: all 0.2s;
+    font-size: 1em;
+    min-width: 120px;
+    text-align: center;
+}
+
+.btn-danger {
+    background: #f56565;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #e53e3e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(245, 101, 101, 0.3);
+}
+
+.btn-secondary {
+    background: #a0aec0;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #718096;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(160, 174, 192, 0.3);
+}
+</style>
+
+<div class="delete-container">
+    <div class="delete-header">
+        <h1>🗑️ Smazat úkol</h1>
+    </div>
+
+    <div class="delete-body">
+        <div class="task-info">
+            <h3>{{ task.title }}</h3>
+            <p><strong>Popis:</strong> {{ task.description|default:"Bez popisu"|truncatechars:100 }}</p>
+            <p><strong>Projekt:</strong> {{ task.project.title }}</p>
+            <p><strong>Datum:</strong> {{ task.date|date:"d.m.Y" }}</p>
+            {% if task.start_time %}
+                <p><strong>Čas:</strong> {{ task.start_time|time:"H:i" }}{% if task.end_time %} - {{ task.end_time|time:"H:i" }}{% endif %}</p>
+            {% endif %}
+            <p><strong>Priorita:</strong> {{ task.get_priority_display }}</p>
+            <p><strong>Stav:</strong> {% if task.completed %}Dokončeno{% else %}Nedokončeno{% endif %}</p>
+            {% if task.tags.exists %}
+                <p><strong>Tagy:</strong> {% for tag in task.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+            {% endif %}
+        </div>
+
+        <div class="warning-text">
+            <strong>Varování!!!</strong>
+            Tato akce je nevratná. Úkol bude trvale odstraněn.
+        </div>
+
+        <form method="post" style="display: inline;">
+            {% csrf_token %}
+            <div class="action-buttons">
+                <button type="submit" class="btn btn-danger">🗑️ Ano, smazat</button>
+                <a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">⬅️ Zrušit</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

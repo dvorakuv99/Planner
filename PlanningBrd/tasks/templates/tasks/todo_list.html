@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.todos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.todos-header h1 {
+    margin: 0;
+    color: #333;
+    font-size: 2em;
+    font-weight: 600;
+}
+
+.create-btn {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.create-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(72, 187, 120, 0.3);
+}
+
+.todo-item {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.todo-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.todo-content {
+    flex: 1;
+}
+
+.todo-title {
+    font-size: 1.2em;
+    font-weight: 500;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.todo-description {
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.todo-due-date {
+    color: #888;
+    font-size: 0.9em;
+}
+
+.todo-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: rgba(66, 153, 225, 1);
+    color: white;
+}
+
+.btn-secondary {
+    background: rgba(226, 232, 240, 1);
+    color: rgba(74, 85, 104, 1);
+}
+
+.btn-danger {
+    background: rgba(229, 62, 62, 1);
+    color: white;
+}
+
+.btn-success {
+    background: rgba(72, 187, 120, 1);
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.completed {
+    opacity: 0.6;
+}
+
+.todo-item.completed .checkbox-text,
+.todo-item.completed .todo-description {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.todo-actions {
+    opacity: 1;
+}
+
+.checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.custom-checkbox {
+    width: 28px;
+    height: 28px;
+    border-radius: 10px;
+    border: 2px solid #cbd5e0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    background: white;
+    flex-shrink: 0;
+}
+
+.checkbox-input:checked + .custom-checkbox {
+    background: #48bb78;
+    border-color: #48bb78;
+}
+
+.checkbox-input:checked + .custom-checkbox::before {
+    content: '✓';
+    color: white;
+    font-size: 1rem;
+    line-height: 0;
+}
+
+.checkbox-input:focus-visible + .custom-checkbox {
+    box-shadow: 0 0 0 4px rgba(72, 187, 120, 0.18);
+}
+
+.checkbox-text {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #333;
+}
+
+.todo-item.completed .checkbox-text {
+    text-decoration: line-through;
+    color: #999;
+}
+</style>
+
+<div class="todos-header">
+    <h1>To do</h1>
+    <a href="{% url 'tasks:create_todo' %}" class="create-btn">Vytvořit To do</a>
+</div>
+
+<div class="todos-list">
+    {% for todo in todos %}
+    <div class="todo-item {% if todo.completed %}completed{% endif %}">
+        <div class="todo-content">
+            <div class="todo-title">
+                <label class="checkbox-label">
+                    <input type="checkbox" class="checkbox-input" onchange="toggleCompleted({{ todo.pk }})" {% if todo.completed %}checked{% endif %}>
+                    <span class="custom-checkbox"></span>
+                    <span class="checkbox-text">{{ todo.title }}</span>
+                </label>
+            </div>
+            {% if todo.description %}
+            <div class="todo-description">{{ todo.description }}</div>
+            {% endif %}
+            <div class="todo-due-date">Do: {{ todo.due_date|date:"d.m.Y" }}</div>
+        </div>
+        <div class="todo-actions">
+            <a href="{% url 'tasks:edit_todo' todo.pk %}" class="btn btn-primary">Upravit</a>
+            <a href="{% url 'tasks:delete_todo' todo.pk %}" class="btn btn-danger">Smazat</a>
+        </div>
+    </div>
+    {% empty %}
+    <div class="todo-item">
+        <div class="todo-content">
+            <div class="todo-title">Žádné úkoly</div>
+            <div class="todo-description">Začněte vytvořením prvního úkolu.</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+function toggleCompleted(pk) {
+    fetch(`{% url 'tasks:toggle_todo_completed' 0 %}`.replace('0', pk), {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json',
+        },
+    }).then(() => {
+        location.reload();
+    });
+}
+</script>
+
+{% endblock %}

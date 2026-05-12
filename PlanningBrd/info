@@ -1,0 +1,38 @@
+http://127.0.0.1:8000/tasks
+http://127.0.0.1:8000/admin
+
+source venv/bin/activate
+
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
+pkill -f "python manage.py runserver"
+
+username: user
+password: heslo
+
+To do:
+
+(změnit kalendář, aby byl víc přehledný a lépe fungoval a pracoval s myšlenkou plánovače)
+
+dodělat předělání dashboardu (když jsou projekty hotovy, tak úkoly zmizí z tech úkolů), upozornění, když nemáme hotové úkoly a chceme potvrdit projekt
+
+omezit, že nelze dávat u úkolů datum mimo období projektu
+
+opravit zaškrtnutí úkolů a projektu v zobrazení úkolů
+
+opravoval jsem to, že jsem mazal zbytečnou class reminder a recurrence, ale nedodělalo se to, tak ať to dodělá
+
+přednat na nový účet
+
+
+
+
+
+CO DÁL:
+
+dodělat strukturu
+předělat vzhled kalendáře
+víc promakat jak, bude fungovat celý kalendář
+
+opravit to, že když jsem přihlášenej na normální stránce, že pak můžu na admina bez přihlášení, když bych se tam neměl dostat (jenom admin ano)

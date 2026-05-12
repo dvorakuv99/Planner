@@ -49,7 +49,7 @@ class ProjectForm(forms.ModelForm):
 class UserSettingsForm(forms.ModelForm):
     class Meta:
         model = UserSettings
-        fields = ["default_priority", "default_recurrence", "show_completed_tasks"]
+        fields = ["default_priority", "show_completed_tasks"]
 
 
 class TaskForm(forms.ModelForm):

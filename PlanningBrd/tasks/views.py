@@ -49,47 +49,7 @@ def logout_view(request):
     return redirect("login")
 
 
-def _add_months(value_date, months=1):
-    month = value_date.month - 1 + months
-    year = value_date.year + month // 12
-    month = month % 12 + 1
-    day = min(value_date.day, calendar_module.monthrange(year, month)[1])
-    return date(year, month, day)
 
-
-def _get_next_recurrence_date(task):
-    if task.recurrence == Task.RECURRENCE_DAILY:
-        return task.date + timedelta(days=1)
-    if task.recurrence == Task.RECURRENCE_WEEKLY:
-        return task.date + timedelta(days=7)
-    if task.recurrence == Task.RECURRENCE_MONTHLY:
-        return _add_months(task.date, 1)
-    return None
-
-
-def _create_next_recurring_task(task):
-    next_date = _get_next_recurrence_date(task)
-    if not next_date or not task.repeat_until:
-        return
-    if next_date > task.repeat_until:
-        return
-    if Task.objects.filter(project=task.project, title=task.title, date=next_date, user=task.user).exists():
-        return
-
-    new_task = Task.objects.create(
-        project=task.project,
-        user=task.user,
-        title=task.title,
-        description=task.description,
-        date=next_date,
-        start_time=task.start_time,
-        end_time=task.end_time,
-        priority=task.priority,
-        recurrence=task.recurrence,
-        repeat_until=task.repeat_until,
-        completed=False,
-    )
-    new_task.tags.set(task.tags.all())
 
 
 @login_required
@@ -526,9 +486,6 @@ def delete_project(request, pk):
     return render(request, "tasks/delete_project.html", {"project": project})
 
 
-def home(request):
-    calendar, created = Calendar.objects.get_or_create(user=request.user)
-    return render(request, "tasks/home.html", {"calendar": calendar})
 @login_required
 def todo_list(request):
     todos = Todo.objects.filter(user=request.user).order_by('due_date')

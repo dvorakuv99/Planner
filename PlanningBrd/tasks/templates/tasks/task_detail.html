@@ -309,14 +309,7 @@
                     </div>
                 </div>
             {% endif %}
-            {% if task.recurrence != 'none' %}
-                <div class="info-item">
-                    <span class="info-label">Opakování:</span>
-                    <span class="info-value">
-                        {{ task.get_recurrence_display }}{% if task.repeat_until %} do {{ task.repeat_until|date:"d.m.Y" }}{% endif %}
-                    </span>
-                </div>
-            {% endif %}
+
         </div>
     </div>
 

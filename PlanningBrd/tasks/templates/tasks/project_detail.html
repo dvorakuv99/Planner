@@ -181,42 +181,144 @@
     line-height: 1.4;
 }
 
-.btn-success {
-    background: #48bb78;
-    color: white;
-}
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+    }
 
-.btn-success:hover {
-    background: #38a169;
-}
+    .modal-overlay.active {
+        display: flex;
+    }
 
-.btn-success-active {
-    background: #276749;
-    color: white;
-}
+    .modal-box {
+        width: min(100%, 760px);
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 32px;
+        box-shadow: 0 24px 80px rgba(15, 23, 42, 0.18);
+        border: 1px solid rgba(248, 113, 113, 0.25);
+    }
 
-.btn-success-active:hover {
-    background: #22543d;
-}
+    .modal-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 24px;
+    }
 
-.btn-task-complete {
-    background: #48bb78;
-    color: white;
-}
+    .modal-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 18px;
+        display: grid;
+        place-items: center;
+        background: #fee2e2;
+        color: #b91c1c;
+        font-size: 1.7rem;
+        font-weight: 700;
+    }
 
-.btn-task-complete:hover {
-    background: #38a169;
-    transform: translateY(-1px);
-}
+    .modal-title {
+        margin: 0;
+        font-size: 1.85rem;
+        color: #7f1d1d;
+        line-height: 1.1;
+    }
 
-.btn-task-complete-active {
-    background: #276749;
-    color: white;
-}
+    .modal-subtitle {
+        margin: 8px 0 0;
+        color: #9a3412;
+        font-size: 1rem;
+    }
 
-.btn-task-complete-active:hover {
-    background: #22543d;
-    transform: translateY(-1px);
+    .modal-copy {
+        display: grid;
+        gap: 18px;
+        margin-bottom: 24px;
+        color: #4b231f;
+        line-height: 1.8;
+    }
+
+    .modal-copy strong {
+        color: #991b1b;
+    }
+
+    .modal-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 24px;
+    }
+
+    .modal-table th,
+    .modal-table td {
+        padding: 14px 16px;
+        text-align: left;
+        border-bottom: 1px solid #f3e1e1;
+    }
+
+    .modal-table th {
+        background: #fff1f2;
+        color: #9a3412;
+        font-weight: 700;
+    }
+
+    .modal-table td {
+        color: #4b231f;
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .modal-actions .btn {
+        min-width: 140px;
+        padding: 12px 18px;
+        font-size: 0.95rem;
+    }
+
+    .modal-actions .btn-danger {
+        box-shadow: 0 12px 30px rgba(220, 38, 38, 0.16);
+    }
+
+    .modal-actions .btn-secondary {
+        background: #f8fafc;
+        color: #334155;
+        border: 1px solid #d1d5db;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 34px;
+        height: 34px;
+        border-radius: 12px;
+        background: #f8fafc;
+        color: #7f1d1d;
+        border: 1px solid #e2e8f0;
+        cursor: pointer;
+        font-size: 1.1rem;
+        line-height: 1;
+        display: grid;
+        place-items: center;
+    }
+
+    .btn-success-active {
+        background: #22c55e;
+        color: white;
+        border: none;
+        box-shadow: 0 12px 30px rgba(34, 197, 94, 0.18);
+    }
 }
 
 .btn-task-edit {
@@ -283,6 +385,17 @@
     background: #5a67d8;
     transform: translateY(-1px);
     box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn-success {
+    background: #48bb78;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #38a169;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(56, 161, 105, 0.3);
 }
 
 .btn-warning {
@@ -400,9 +513,19 @@
 </div>
 
 <div class="action-buttons">
-    <a href="{% url 'tasks:toggle_project_completed' project.pk %}" class="btn {% if project.completed %}btn-success-active{% else %}btn-success{% endif %}">
-        {% if project.completed %}✓ Projekt dokončen{% else %}✓ Dokončit projekt{% endif %}
-    </a>
+    {% if project.completed %}
+        <form method="post" action="{% url 'tasks:toggle_project_completed' project.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success-active">✓ Projekt dokončen</button>
+        </form>
+    {% elif incomplete_task_count > 0 %}
+        <a href="{% url 'tasks:toggle_project_completed' project.pk %}" class="btn btn-danger">✓ Dokončit projekt</a>
+    {% else %}
+        <form method="post" action="{% url 'tasks:toggle_project_completed' project.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">✓ Dokončit projekt</button>
+        </form>
+    {% endif %}
     <a href="{% url 'tasks:edit_project' project.pk %}" class="btn btn-warning">✏️ Upravit projekt</a>
     <a href="{% url 'tasks:delete_project' project.pk %}" class="btn btn-danger">🗑️ Smazat projekt</a>
     <a href="{% url 'tasks:project_list' %}" class="btn btn-secondary">⬅️ Zpět na projekty</a>

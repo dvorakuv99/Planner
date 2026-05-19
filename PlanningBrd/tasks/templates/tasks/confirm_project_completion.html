@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.delete-container {
+    max-width: 600px;
+    margin: 50px auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.delete-header {
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.delete-header h1 {
+    margin: 0;
+    font-size: 1.8em;
+    font-weight: 300;
+}
+
+.delete-body {
+    padding: 30px;
+}
+
+.project-info {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border-left: 4px solid #f56565;
+}
+
+.project-info h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.project-info p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.warning-text {
+    background: #fff5f5;
+    border: 1px solid #feb2b2;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    color: #c53030;
+}
+
+.warning-text strong {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: 500;
+    transition: all 0.2s;
+    font-size: 1em;
+    min-width: 120px;
+    text-align: center;
+}
+
+.btn-danger {
+    background: #f56565;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #e53e3e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(245, 101, 101, 0.3);
+}
+
+.btn-secondary {
+    background: #a0aec0;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #718096;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(160, 174, 192, 0.3);
+}
+</style>
+
+<div class="delete-container">
+    <div class="delete-header">
+        <h1>⚠️ Dokončit projekt</h1>
+    </div>
+
+    <div class="delete-body">
+        <div class="project-info">
+            <h3>{{ project.title }}</h3>
+            <p><strong>Popis:</strong> {{ project.description|default:"Bez popisu" }}</p>
+            <p><strong>Období:</strong> {{ project.start_date|date:"d.m.Y" }} - {{ project.end_date|date:"d.m.Y" }}</p>
+            <p><strong>Úkolů celkem:</strong> {{ project.tasks.count }}</p>
+            <p><strong>Nesplněných úkolů:</strong> {{ incomplete_task_count }}</p>
+        </div>
+
+        <div class="warning-text">
+            <strong>Varování!!!</strong>
+            Projekt obsahuje nesplněné úkoly. Dokončením projektu budou tyto úkoly automaticky označeny jako splněné.
+        </div>
+
+        <form method="post" style="display: inline;" action="{% url 'tasks:toggle_project_completed' project.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="confirm" value="1">
+            <div class="action-buttons">
+                <button type="submit" class="btn btn-danger">Ano, dokončit projekt</button>
+                <a href="{% url 'tasks:project_detail' project.pk %}" class="btn btn-secondary">⬅️ Zrušit</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

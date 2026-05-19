@@ -273,6 +273,7 @@ details[open] .filter-summary::after {
 
 .task-item.completed .task-info h3 {
     color: #999;
+    text-decoration: line-through;
 }
 
 .task-item.completed .task-info p {
@@ -570,7 +571,7 @@ details[open] .filter-summary::after {
 <div class="tasks-container">
     {% if grouped_tasks %}
         {% for project, project_tasks in grouped_tasks %}
-            <div class="project-group">
+            <div class="project-group{% if project.completed %} completed{% endif %}">
                 <div class="project-group-header{% if project.completed %} completed{% endif %}">
                     <div>
                         <span class="project-group-title">{{ project.title }}</span>
@@ -582,7 +583,7 @@ details[open] .filter-summary::after {
                 </div>
 
                 {% for task in project_tasks %}
-                        <div class="task-item{% if task.completed %} completed{% endif %}">
+                        <div class="task-item{% if task.completed or project.completed %} completed{% endif %}">
                             <div class="task-info">
                                 <h3><a href="{% url 'tasks:task_detail' task.pk %}" style="color: inherit; text-decoration: none;">{{ task.title }}</a></h3>
                                 <p>
@@ -601,9 +602,9 @@ details[open] .filter-summary::after {
 
                             <div class="task-actions">
                                 <label class="task-checkbox-label">
-                                    <input type="checkbox" class="task-checkbox-input" onchange="toggleTaskCompleted({{ task.pk }})" {% if task.completed %}checked{% endif %}>
+                                    <input type="checkbox" class="task-checkbox-input" onchange="toggleTaskCompleted({{ task.pk }})" {% if task.completed or project.completed %}checked{% endif %}>
                                     <span class="custom-task-checkbox"></span>
-                                    <span class="task-checkbox-text">{% if task.completed %}Dokončeno{% else %}Dokončit{% endif %}</span>
+                                    <span class="task-checkbox-text">{% if task.completed or project.completed %}Dokončeno{% else %}Dokončit{% endif %}</span>
                                 </label>
                                 <a href="{% url 'tasks:edit_task' task.pk %}" class="btn-small btn-edit" title="Upravit">✏️</a>
                                 <a href="{% url 'tasks:delete_task' task.pk %}" class="btn-small btn-delete" title="Smazat">🗑️</a>

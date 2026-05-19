@@ -371,9 +371,28 @@ def toggle_task_completed(request, pk):
 @login_required
 def toggle_project_completed(request, pk):
     project = get_object_or_404(Project, pk=pk, user=request.user)
-    project.completed = not project.completed
-    project.save()
-    return redirect('tasks:project_detail', pk=project.pk)
+    incomplete_tasks = project.tasks.filter(completed=False)
+    incomplete_count = incomplete_tasks.count()
+
+    if request.method == 'GET':
+        if project.completed or incomplete_count == 0:
+            return redirect('tasks:project_detail', pk=project.pk)
+        return render(request, 'tasks/confirm_project_completion.html', {
+            'project': project,
+            'incomplete_task_count': incomplete_count,
+            'incomplete_tasks': incomplete_tasks,
+        })
+
+    if request.method == 'POST':
+        if not project.completed:
+            if incomplete_count > 0 and request.POST.get('confirm') != '1':
+                return redirect('tasks:project_detail', pk=project.pk)
+            incomplete_tasks.update(completed=True)
+            project.completed = True
+        else:
+            project.completed = False
+        project.save()
+        return redirect('tasks:project_detail', pk=project.pk)
 
 
 @login_required
@@ -452,7 +471,13 @@ def create_project_from_calendar(request):
 @login_required
 def project_detail(request, pk):
     project = get_object_or_404(Project, pk=pk, user=request.user)
-    return render(request, "tasks/project_detail.html", {"project": project})
+    incomplete_tasks = project.tasks.filter(completed=False)
+    incomplete_task_count = incomplete_tasks.count()
+    return render(request, "tasks/project_detail.html", {
+        "project": project,
+        "incomplete_task_count": incomplete_task_count,
+        "incomplete_tasks": incomplete_tasks,
+    })
 
 @login_required
 def edit_project(request, pk):

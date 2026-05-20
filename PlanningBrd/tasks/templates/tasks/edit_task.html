@@ -174,7 +174,7 @@
 
 <div class="edit-container">
     <div class="edit-header">
-        <h1>✏️ Upravit úkol</h1>
+        <h1>Upravit úkol</h1>
     </div>
 
     <div class="edit-body">
@@ -224,7 +224,7 @@
             </div>
 
             <div class="time-toggle">
-                <button type="button" id="toggle-time-btn">🕒 Přidat čas</button>
+                <button type="button" id="toggle-time-btn">Přidat čas</button>
             </div>
 
             <div class="time-fields" id="time-fields">
@@ -253,8 +253,8 @@
             </div>
 
             <div class="action-buttons">
-                <button type="submit" class="btn btn-primary">💾 Uložit změny</button>
-                <a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">⬅️ Zrušit</a>
+                <button type="submit" class="btn btn-primary">Uložit změny</button>
+                <a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">Zrušit</a>
             </div>
         </form>
     </div>
@@ -269,10 +269,10 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleBtn.addEventListener('click', function() {
         if (timeFields.style.display === 'none' || timeFields.style.display === '') {
             timeFields.style.display = 'block';
-            toggleBtn.textContent = '🕒 Skrýt čas';
+            toggleBtn.textContent = 'Skrýt čas';
         } else {
             timeFields.style.display = 'none';
-            toggleBtn.textContent = '🕒 Přidat čas';
+            toggleBtn.textContent = 'Přidat čas';
         }
     });
 
@@ -280,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const endTime = document.getElementById('{{ form.end_time.id_for_label }}');
     if ((startTime && startTime.value) || (endTime && endTime.value)) {
         timeFields.style.display = 'block';
-        toggleBtn.textContent = '🕒 Skrýt čas';
+        toggleBtn.textContent = 'Skrýt čas';
     }
 });
 </script>

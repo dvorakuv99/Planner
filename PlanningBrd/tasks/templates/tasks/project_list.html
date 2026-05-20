@@ -202,7 +202,7 @@
 
 <div class="projects-header">
     <h1>Projekty</h1>
-    <a href="{% url 'tasks:create_project' %}" class="create-btn">➕ Nový projekt</a>
+    <a href="{% url 'tasks:create_project' %}" class="create-btn">Nový projekt</a>
 </div>
 
 {% if projects %}
@@ -224,8 +224,8 @@
                     </div>
 
                     <div class="project-actions">
-                        <a href="{% url 'tasks:edit_project' project.pk %}" class="btn-small btn-edit">✏️ Upravit</a>
-                        <a href="{% url 'tasks:delete_project' project.pk %}" class="btn-small btn-delete">🗑️ Smazat</a>
+                        <a href="{% url 'tasks:edit_project' project.pk %}" class="btn-small btn-edit">Upravit</a>
+                        <a href="{% url 'tasks:delete_project' project.pk %}" class="btn-small btn-delete">Smazat</a>
                     </div>
                 </div>
             </div>

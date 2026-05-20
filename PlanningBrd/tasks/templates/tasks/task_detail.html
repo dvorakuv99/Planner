@@ -254,7 +254,7 @@
         <div class="meta-item">
             <strong>Stav:</strong>
             <span class="status-badge {% if task.completed %}status-completed{% else %}status-pending{% endif %}">
-                {% if task.completed %}✓ Splněno{% else %}⏳ Nedokončeno{% endif %}
+                {% if task.completed %}Splněno{% else %}Nedokončeno{% endif %}
             </span>
         </div>
         <div class="meta-item">
@@ -315,11 +315,11 @@
 
     <div class="action-buttons">
         <a href="{% url 'tasks:toggle_task_completed' task.pk %}" class="btn {% if task.completed %}btn-success-active{% else %}btn-success{% endif %}">
-            {% if task.completed %}✓ Zrušit splnění{% else %}✓ Potvrdit splnění{% endif %}
+            {% if task.completed %}Zrušit splnění{% else %}Potvrdit splnění{% endif %}
         </a>
-        <a href="{% url 'tasks:edit_task' task.pk %}" class="btn btn-warning">✏️ Upravit</a>
-        <a href="{% url 'tasks:delete_task' task.pk %}" class="btn btn-danger">🗑️ Smazat</a>
-        <a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">← Zpět</a>
+        <a href="{% url 'tasks:edit_task' task.pk %}" class="btn btn-warning">Upravit</a>
+        <a href="{% url 'tasks:delete_task' task.pk %}" class="btn btn-danger">Smazat</a>
+        <a href="{% url 'tasks:task_list' %}" class="btn btn-secondary">Zpět</a>
     </div>
 </div>
 

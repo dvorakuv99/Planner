@@ -107,7 +107,7 @@
 
 <div class="delete-container">
     <div class="delete-header">
-        <h1>🗑️ Smazat projekt</h1>
+        <h1>⚠️ Smazat projekt</h1>
     </div>
 
     <div class="delete-body">
@@ -126,8 +126,8 @@
         <form method="post" style="display: inline;">
             {% csrf_token %}
             <div class="action-buttons">
-                <button type="submit" class="btn btn-danger">🗑️ Ano, smazat</button>
-                <a href="{% url 'tasks:project_detail' project.pk %}" class="btn btn-secondary">⬅️ Zrušit</a>
+                <button type="submit" class="btn btn-danger">Ano, smazat</button>
+                <a href="{% url 'tasks:project_detail' project.pk %}" class="btn btn-secondary">Zrušit</a>
             </div>
         </form>
     </div>

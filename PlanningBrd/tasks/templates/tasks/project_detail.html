@@ -319,7 +319,6 @@
         border: none;
         box-shadow: 0 12px 30px rgba(34, 197, 94, 0.18);
     }
-}
 
 .btn-task-edit {
     background: #f6ad55;
@@ -483,7 +482,7 @@
 <div class="tasks-section">
     <h3>Úkoly v projektu</h3>
 
-    <a href="{% url 'tasks:create_task_for_project' project.pk %}" class="add-task-btn">➕ Přidat úkol</a>
+    <a href="{% url 'tasks:create_task_for_project' project.pk %}" class="add-task-btn">Přidat úkol</a>
 
     {% for task in project.tasks.all %}
         <div class="task-item{% if task.completed %} completed{% endif %}">
@@ -516,19 +515,19 @@
     {% if project.completed %}
         <form method="post" action="{% url 'tasks:toggle_project_completed' project.pk %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-success-active">✓ Projekt dokončen</button>
+            <button type="submit" class="btn btn-success-active">Projekt dokončen</button>
         </form>
     {% elif incomplete_task_count > 0 %}
-        <a href="{% url 'tasks:toggle_project_completed' project.pk %}" class="btn btn-danger">✓ Dokončit projekt</a>
+        <a href="{% url 'tasks:toggle_project_completed' project.pk %}" class="btn btn-danger">Dokončit projekt</a>
     {% else %}
         <form method="post" action="{% url 'tasks:toggle_project_completed' project.pk %}">
             {% csrf_token %}
-            <button type="submit" class="btn btn-success">✓ Dokončit projekt</button>
+            <button type="submit" class="btn btn-success">Dokončit projekt</button>
         </form>
     {% endif %}
-    <a href="{% url 'tasks:edit_project' project.pk %}" class="btn btn-warning">✏️ Upravit projekt</a>
-    <a href="{% url 'tasks:delete_project' project.pk %}" class="btn btn-danger">🗑️ Smazat projekt</a>
-    <a href="{% url 'tasks:project_list' %}" class="btn btn-secondary">⬅️ Zpět na projekty</a>
+    <a href="{% url 'tasks:edit_project' project.pk %}" class="btn btn-warning">Upravit projekt</a>
+    <a href="{% url 'tasks:delete_project' project.pk %}" class="btn btn-danger">Smazat projekt</a>
+    <a href="{% url 'tasks:project_list' %}" class="btn btn-secondary">Zpět na projekty</a>
 </div>
 
 <script>

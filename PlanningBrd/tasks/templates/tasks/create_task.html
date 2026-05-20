@@ -217,7 +217,7 @@
 
 <div class="create-container">
     <div class="create-header">
-        <h1>➕ {% if project %}Přidat úkol do projektu{% else %}Vytvořit nový úkol{% endif %}</h1>
+        <h1>{% if project %}Přidat úkol do projektu{% else %}Vytvořit nový úkol{% endif %}</h1>
     </div>
 
     <div class="create-body">
@@ -266,7 +266,7 @@
             </div>
 
             <div class="time-toggle">
-                <button type="button" id="toggle-time-btn">🕒 Přidat čas</button>
+                <button type="button" id="toggle-time-btn">Přidat čas</button>
             </div>
 
             <div class="time-fields" id="time-fields">
@@ -307,9 +307,8 @@
             </div>
 
             <div class="action-buttons">
-                <button type="submit" class="btn btn-primary">💾 Uložit úkol</button>
-                <a href="{% if project %}{% url 'tasks:project_detail' project.pk %}{% else %}{% url 'tasks:task_list' %}{% endif %}" class="btn btn-secondary">⬅️ Zrušit</a>
-            </div>
+                <button type="submit" class="btn btn-primary">Uložit úkol</button>
+                <a href="{% if project %}{% url 'tasks:project_detail' project.pk %}{% else %}{% url 'tasks:task_list' %}{% endif %}" class="btn btn-secondary">Zrušit</a>
         </form>
     </div>
 </div>
@@ -323,10 +322,10 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleBtn.addEventListener('click', function() {
         if (timeFields.style.display === 'none' || timeFields.style.display === '') {
             timeFields.style.display = 'block';
-            toggleBtn.textContent = '🕒 Skrýt čas';
+            toggleBtn.textContent = 'Skrýt čas';
         } else {
             timeFields.style.display = 'none';
-            toggleBtn.textContent = '🕒 Přidat čas';
+            toggleBtn.textContent = 'Přidat čas';
         }
     });
 
@@ -335,7 +334,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const endTime = document.getElementById('{{ form.end_time.id_for_label }}');
     if ((startTime && startTime.value) || (endTime && endTime.value)) {
         timeFields.style.display = 'block';
-        toggleBtn.textContent = '🕒 Skrýt čas';
+        toggleBtn.textContent = 'Skrýt čas';
     }
 });
 </script>

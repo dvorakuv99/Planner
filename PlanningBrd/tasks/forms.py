@@ -74,6 +74,33 @@ class TaskForm(forms.ModelForm):
             self.fields['project'].queryset = Project.objects.filter(user=user)
             self.fields['project'].label = "Projekt"
 
+        project = None
+        if self.instance and self.instance.pk:
+            project = self.instance.project
+        elif self.data.get('project'):
+            try:
+                project = Project.objects.get(pk=self.data.get('project'), user=user)
+            except Project.DoesNotExist:
+                project = None
+
+        if project:
+            self.fields['date'].widget.attrs.update({
+                'min': project.start_date.isoformat(),
+                'max': project.end_date.isoformat(),
+            })
+
+    def clean(self):
+        cleaned_data = super().clean()
+        project = cleaned_data.get('project')
+        date = cleaned_data.get('date')
+        if project and date:
+            if date < project.start_date or date > project.end_date:
+                raise forms.ValidationError(
+                    "Datum úkolu musí být v rozmezí data projektu: "
+                    f"{project.start_date} až {project.end_date}."
+                )
+        return cleaned_data
+
 class TodoForm(forms.ModelForm):
     class Meta:
         model = Todo

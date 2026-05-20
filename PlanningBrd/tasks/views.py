@@ -311,6 +311,14 @@ def create_task(request, project_id=None):
         # Pokud je projekt zadán v URL, nastavíme jej jako výchozí
         if project:
             form.fields['project'].initial = project
+            form.fields['date'].widget.attrs.update({
+                'min': project.start_date.isoformat(),
+                'max': project.end_date.isoformat(),
+            })
+            form.fields['date'].help_text = (
+                f"Datum musí být mezi {project.start_date.strftime('%d.%m.%Y')} "
+                f"a {project.end_date.strftime('%d.%m.%Y')} včetně."
+            )
 
     return render(request, "tasks/create_task.html", {
         "form": form,
@@ -331,6 +339,11 @@ def edit_task(request, pk):
             return redirect("tasks:task_list")
     else:
         form = TaskForm(instance=task, user=request.user)
+        if task.project:
+            form.fields['date'].widget.attrs.update({
+                'min': task.project.start_date.isoformat(),
+                'max': task.project.end_date.isoformat(),
+            })
     
     return render(request, "tasks/edit_task.html", {
         "form": form,

@@ -11,8 +11,8 @@ pkill -f "python manage.py runserver"
 username: user
 password: heslo
 
-To do:
+To do do budoucna:
 
+dark mode
 
-CO DÁL:
-opravit to, že když jsem přihlášenej na normální stránce, že pak můžu na admina bez přihlášení, když bych se tam neměl dostat (jenom admin ano)
+jiné jazyky

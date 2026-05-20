@@ -107,5 +107,24 @@ class Todo(models.Model):
     completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def remaining_days(self):
+        from datetime import date
+        return (self.due_date - date.today()).days
+
+    @property
+    def remaining_days_abs(self):
+        return abs(self.remaining_days)
+
+    @property
+    def remaining_days_class(self):
+        if self.completed:
+            return "gray"
+        if self.remaining_days < 0:
+            return "red"
+        if self.remaining_days <= 2:
+            return "orange"
+        return "green"
+
     def __str__(self):
         return self.title

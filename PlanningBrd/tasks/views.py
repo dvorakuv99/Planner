@@ -526,7 +526,8 @@ def delete_project(request, pk):
 
 @login_required
 def todo_list(request):
-    todos = Todo.objects.filter(user=request.user).order_by('due_date')
+    todos = list(Todo.objects.filter(user=request.user))
+    todos.sort(key=lambda todo: todo.remaining_days)
     return render(request, 'tasks/todo_list.html', {'todos': todos})
 
 @login_required

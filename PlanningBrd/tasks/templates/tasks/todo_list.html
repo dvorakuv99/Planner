@@ -129,6 +129,37 @@
     opacity: 1;
 }
 
+.todo-remaining-days {
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.remaining-days.green {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.remaining-days.orange {
+    background: #ffedd5;
+    color: #9a3412;
+}
+
+.remaining-days.red {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.remaining-days.gray {
+    background: #e5e7eb;
+    color: #374151;
+}
+
 .checkbox-label {
     display: inline-flex;
     align-items: center;
@@ -205,6 +236,15 @@
             <div class="todo-description">{{ todo.description }}</div>
             {% endif %}
             <div class="todo-due-date">Do: {{ todo.due_date|date:"d.m.Y" }}</div>
+            <div class="todo-remaining-days remaining-days {{ todo.remaining_days_class }}">
+                {% if todo.remaining_days < 0 %}
+                    Po termínu {{ todo.remaining_days_abs }} dní
+                {% elif todo.remaining_days == 0 %}
+                    Dnes
+                {% else %}
+                    Zbývá {{ todo.remaining_days }} dní
+                {% endif %}
+            </div>
         </div>
         <div class="todo-actions">
             <a href="{% url 'tasks:edit_todo' todo.pk %}" class="btn btn-primary">Upravit</a>

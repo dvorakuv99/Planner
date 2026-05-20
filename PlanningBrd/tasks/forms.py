@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Task, Project, Calendar, Tag, UserSettings, Todo
+from .models import Task, Project, Calendar, UserSettings, Todo
 
 
 class SignUpForm(forms.ModelForm):

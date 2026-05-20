@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const toggleBtn = document.getElementById('toggle-time-btn');
     const timeFields = document.getElementById('time-fields');
 
-    // Toggle time fields
+    
     toggleBtn.addEventListener('click', function() {
         if (timeFields.style.display === 'none' || timeFields.style.display === '') {
             timeFields.style.display = 'block';
@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Check if time fields should be shown initially
+    
     const startTime = document.getElementById('{{ form.start_time.id_for_label }}');
     const endTime = document.getElementById('{{ form.end_time.id_for_label }}');
     if ((startTime && startTime.value) || (endTime && endTime.value)) {

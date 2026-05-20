@@ -179,7 +179,7 @@
 
 <div id="calendar"></div>
 
-<!-- MODAL -->
+
 <div id="createModal" class="modal hidden">
     <div class="modal-content">
         <h3>Vytvořit nový projekt?</h3>
@@ -224,7 +224,7 @@ document.addEventListener("DOMContentLoaded", function() {
         },
         
         eventClick: function(info) {
-            // Klik na projekt - jdi na zobrazení projektu
+            
             window.location.href = info.event.url;
         }
     });
@@ -236,7 +236,7 @@ document.addEventListener("DOMContentLoaded", function() {
         selectedDate = null;
     });
 
-    // Zavřít modal při kliknutí mimo
+    
     modal.addEventListener("click", function(e) {
         if (e.target === modal) {
             modal.classList.add("hidden");

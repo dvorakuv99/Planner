@@ -121,9 +121,6 @@
             {% endif %}
             <p><strong>Priorita:</strong> {{ task.get_priority_display }}</p>
             <p><strong>Stav:</strong> {% if task.completed %}Dokončeno{% else %}Nedokončeno{% endif %}</p>
-            {% if task.tags.exists %}
-                <p><strong>Tagy:</strong> {% for tag in task.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
-            {% endif %}
         </div>
 
         <div class="warning-text">

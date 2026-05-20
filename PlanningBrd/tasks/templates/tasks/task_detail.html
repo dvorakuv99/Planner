@@ -93,20 +93,6 @@
     font-size: 0.95em;
 }
 
-.task-tags {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.tag {
-    display: inline-block;
-    background: #ebf8ff;
-    color: #2c5282;
-    padding: 4px 12px;
-    border-radius: 999px;
-    font-size: 0.85em;
-}
 
 .priority-badge {
     display: inline-block;
@@ -299,17 +285,6 @@
                     {% endif %}
                 </span>
             </div>
-            {% if task.tags.exists %}
-                <div class="info-item">
-                    <span class="info-label">Tagy:</span>
-                    <div class="task-tags">
-                        {% for tag in task.tags.all %}
-                            <span class="tag">{{ tag.name }}</span>
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
-
         </div>
     </div>
 

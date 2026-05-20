@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
-from .models import Task, Project, Calendar, Tag, UserSettings, Todo
+from .models import Task, Project, Calendar, UserSettings, Todo
 from .forms import TaskForm, ProjectForm, CalendarForm, UserSettingsForm, TodoForm, SignUpForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, logout
@@ -13,17 +13,6 @@ from datetime import date, timedelta
 import calendar as calendar_module
 
 # Create your views here.
-
-def _parse_tags(user, raw_tags):
-    if not raw_tags:
-        return []
-    names = [name.strip() for name in raw_tags.split(",") if name.strip()]
-    tags = []
-    for name in names:
-        tag, _ = Tag.objects.get_or_create(user=user, name=name)
-        tags.append(tag)
-    return tags
-
 
 def signup(request):
     if request.method == "POST":
@@ -57,12 +46,12 @@ def dashboard(request):
     """Hlavní dashboard s přehledem aktivit"""
     user = request.user
 
-    # Získání kalendáře uživatele
+    
     calendar = Calendar.objects.filter(user=user).first()
     if not calendar:
         calendar = Calendar.objects.create(user=user, field="Můj kalendář")
 
-    # Statistiky
+    
     total_projects = Project.objects.filter(user=user).count()
     total_tasks = Task.objects.filter(user=user).count()
     completed_tasks = Task.objects.filter(user=user, completed=True).count()
@@ -71,33 +60,33 @@ def dashboard(request):
     completed_todos = Todo.objects.filter(user=user, completed=True).count()
     pending_todos = total_todos - completed_todos
 
-    # Nedávné úkoly (posledních 7 dní)
+    
     week_ago = timezone.now() - timedelta(days=7)
     recent_tasks = Task.objects.filter(
         user=user,
         created_at__gte=week_ago
     ).order_by('-created_at')[:5]
 
-    # Dnešní úkoly
+    
     today_tasks = Task.objects.filter(
         user=user,
         date=date.today()
     ).order_by('start_time')
 
-    # Dnešní Todo
+    
     today_todos = Todo.objects.filter(
         user=user,
         due_date=date.today()
     ).order_by('created_at')
 
-    # Probíhající projekty
+    
     current_projects = Project.objects.filter(
         user=user,
         start_date__lte=date.today(),
         end_date__gte=date.today()
     ).order_by('end_date')
 
-    # Nadcházející a po termínu
+    
     upcoming_projects = Project.objects.filter(
         user=user,
         start_date__gt=date.today()
@@ -108,7 +97,7 @@ def dashboard(request):
         end_date__lt=date.today()
     ).order_by('-end_date')
 
-    # Úkoly k dokončení a přehledné seznamy
+    
     pending_tasks_list = Task.objects.filter(
         user=user,
         completed=False,
@@ -196,7 +185,7 @@ def calendar_events(request):
 
     events = []
     for project in projects:
-        # Výpočet urgency podle zbývajícího času
+       
         total_days = (project.end_date - project.start_date).days
         if total_days <= 0:
             remaining_percentage = 0
@@ -207,13 +196,13 @@ def calendar_events(request):
         if project.completed:
             class_name = "project-completed"
         elif remaining_percentage > 0.5:
-            class_name = "urgency-low"  # zelená - nízká urgentnost
+            class_name = "urgency-low"  
         elif remaining_percentage > 0.25:
-            class_name = "urgency-medium"  # oranžová - střední urgentnost
+            class_name = "urgency-medium"  
         else:
-            class_name = "urgency-high"  # červená - vysoká urgentnost
+            class_name = "urgency-high"  
         
-        # Jednodušší název s počtem zbývajících dní
+        
         remaining_days = max(0, (project.end_date - today).days)
         title = f"{project.title} ({remaining_days} dní)"
         
@@ -240,10 +229,10 @@ def calendar_events(request):
 def task_list(request):
     user = request.user
 
-    # Získání projektů pro výběr
+    
     projects = Project.objects.filter(user=user).order_by('title')
 
-    # Vybrané projekty z GET parametru
+    
     selected_projects = request.GET.getlist('projects')
     filter_submitted = request.GET.get('filter_submitted')
     selected_project_ids = [int(pid) for pid in selected_projects if pid.isdigit()]
@@ -276,12 +265,12 @@ def task_list(request):
 def create_task(request, project_id=None):
     user = request.user
     
-    # Pokud je zadán project_id, získáme projekt
+    
     project = None
     if project_id:
         project = get_object_or_404(Project, id=project_id, user=user)
     
-    # Získáme seznam projektů pro výběr v formuláři
+    
     projects = Project.objects.filter(user=user)
 
     date = request.GET.get("date")
@@ -308,7 +297,7 @@ def create_task(request, project_id=None):
 
         form = TaskForm(initial=initial, user=user)
         
-        # Pokud je projekt zadán v URL, nastavíme jej jako výchozí
+
         if project:
             form.fields['project'].initial = project
             form.fields['date'].widget.attrs.update({
@@ -373,7 +362,6 @@ def toggle_task_completed(request, pk):
     task.completed = not task.completed
     task.save()
     
-    # Vrátit se na stranu, ze které uživatel přišel
     referer = request.META.get('HTTP_REFERER', '')
     if 'project' in referer and task.project:
         return redirect('tasks:project_detail', pk=task.project.pk)
@@ -440,7 +428,7 @@ def create_project(request):
     if not calendar:
         calendar = Calendar.objects.create(user=user, field="Můj kalendář")
 
-    # Zpracuj start_date z URL, pokud existuje
+
     start_date = request.GET.get("start_date")
 
     if request.method == "POST":
@@ -452,7 +440,6 @@ def create_project(request):
             project.save()
             return redirect("tasks:project_detail", pk=project.id)
     else:
-        # Pokud je start_date v URL, použij jej jako výchozí
         if start_date:
             form = ProjectForm(initial={"start_date": start_date})
         else:

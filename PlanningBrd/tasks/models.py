@@ -8,18 +8,6 @@ class Calendar(models.Model):
     field = models.CharField(max_length=100)
 
 
-class Tag(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=50)
-
-    class Meta:
-        unique_together = ("user", "name")
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
-
-
 class Project(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
@@ -69,7 +57,6 @@ class Task(models.Model):
     end_time = models.TimeField(null=True, blank=True)
 
     priority = models.IntegerField(choices=PRIORITY_CHOICES, default=PRIORITY_MEDIUM)
-    tags = models.ManyToManyField(Tag, blank=True)
     completed = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -84,10 +71,6 @@ class Task(models.Model):
             self.PRIORITY_MEDIUM: "medium",
             self.PRIORITY_LOW: "low",
         }.get(self.priority, "medium")
-
-    @property
-    def tag_names(self):
-        return ", ".join(self.tags.values_list("name", flat=True))
 
 
 class UserSettings(models.Model):
